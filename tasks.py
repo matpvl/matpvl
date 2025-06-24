@@ -1,6 +1,8 @@
 import os
 import subprocess
 import sys
+import random
+import pythonbible as bible
 from time import time
 from typing import Optional
 
@@ -91,9 +93,43 @@ def build_local(c):
     console.print(
         f"[bold green] :raised_hands: build completed in {duration:.2f} seconds! :raised_hands: [/]"
     )
+    console.print(f"[yellow1] {_get_random_proverbs_verse()}")
 
 
 # --- Utility functions ---
+
+
+def _get_random_proverbs_verse(version=bible.Version.KING_JAMES):
+    """Returns a random verse from the Book of Proverbs."""
+
+    # Proverbs has chapters 1-31
+    chapter = random.randint(1, 31)
+
+    # Create a reference for the entire chapter to get all verse IDs
+    chapter_ref = bible.NormalizedReference(
+        bible.Book.PROVERBS, chapter, 1, chapter, 999
+    )
+    try:
+        verse_ids = bible.convert_reference_to_verse_ids(chapter_ref)
+        # The number of verses is the length of valid verse IDs
+        verse_count = len(verse_ids)
+    except bible.errors.InvalidVerseError:
+        # Fallback in case of unexpected issues
+        verse_count = 1  # Minimum verses to avoid failure
+
+    # Pick a random verse in the chapter
+    verse = random.randint(1, verse_count)
+
+    # Get the verse ID for the selected verse
+    verse_ref = bible.NormalizedReference(
+        bible.Book.PROVERBS, chapter, verse, chapter, verse
+    )
+    verse_id = bible.convert_reference_to_verse_ids(verse_ref)[0]
+
+    # Get the verse text and formatted reference
+    verse_text = bible.get_verse_text(verse_id, version=version)
+
+    return verse_text
 
 
 def _log_task(name: str):
