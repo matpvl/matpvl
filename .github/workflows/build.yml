@@ -1,18 +1,41 @@
-name: CI-BUILD
+name: CI
 
 on: [push, pull_request]
 
 jobs:
-  build:
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-python@v5
-      with:
-        python-version: "3.12"
-    - name: Install UV
-      run: pip install uv
-    - name: Install dependencies
-      run: uv sync
-    - name: Run full build
-      run: uv run invoke build-local
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install UV
+        run: pip install uv
+      - name: Install dependencies
+        run: uv sync
+      - name: Run Ruff
+        run: uv run invoke ruff
+      - name: Run Mypy
+        run: uv run invoke mypy
+      - name: Run Vulture
+        run: uv run invoke vulture
+      - name: Run Radon
+        run: uv run invoke radon_analysis
+
+  test:
+    name: Test
+    needs: lint  # run tests only if lint passes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install UV
+        run: pip install uv
+      - name: Install dependencies
+        run: uv sync
+      - name: Run Tests
+        run: uv run invoke test
