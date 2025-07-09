@@ -20,6 +20,7 @@ BUILD_START_TIME = None
 
 @task
 def _build_started(c):
+    """Initiate build."""
     global BUILD_START_TIME
     BUILD_START_TIME = time()
     console.print(
@@ -29,14 +30,13 @@ def _build_started(c):
 
 @task
 def blackd(c):
-    """
-    Run black daemon.
-    """
+    """Run black daemon."""
     _run_program(["blackd"])
 
 
 @task
 def ruff(c):
+    """Run the ruff linter."""
     _section_header(f"ruff")
     _log_task("ruff")
     _run_program(["ruff", "check", SRC_DIR, "--fix", "--preview"])
@@ -44,6 +44,7 @@ def ruff(c):
 
 @task
 def mypy(c):
+    """Run mypy."""
     _section_header(f"mypy")
     _log_task("mypy")
     args = [
@@ -63,6 +64,7 @@ def mypy(c):
 
 @task
 def vulture(c):
+    """Run vulture to spot dead code."""
     _section_header(f"vulture")
     _log_task("vulture")
     _run_program(["vulture", SRC_DIR])
@@ -70,6 +72,7 @@ def vulture(c):
 
 @task
 def radon_analysis(c):
+    """Run radon analysis for code complexity and maintainability."""
     _section_header(f"radon")
     _log_task("radon maintainability")
     _run_program(["radon", "mi", SRC_DIR, "--min", "C", "--show"])
@@ -88,8 +91,18 @@ def radon_analysis(c):
     )
 
 
-@task(pre=[_build_started, ruff, mypy, vulture, radon_analysis])
+@task
+def test(c, k: str = "", verbose: bool = False):
+    """Run tests using pytest."""
+
+    _section_header("pytest")
+    _log_task("tests")
+    _run_program(["pytest", "src/tests"])
+
+
+@task(pre=[_build_started, ruff, mypy, vulture, radon_analysis, test])
 def build_local(c):
+    """Run the local build."""
     duration = time() - BUILD_START_TIME
     console.print(
         f"[bold green] :raised_hands: build completed in {duration:.2f} seconds! :raised_hands: [/]"
