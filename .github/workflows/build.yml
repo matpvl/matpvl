@@ -15,4 +15,4 @@ jobs:
     - name: Install dependencies
       run: uv sync
     - name: Run full build
-      run: uv run invoke build_local
+      run: uv run invoke build-local
