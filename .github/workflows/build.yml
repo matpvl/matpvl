@@ -13,6 +13,6 @@ jobs:
     - name: Install UV
       run: pip install uv
     - name: Install dependencies
-      run: uv pip install -e ".[test]"
+      run: uv sync
     - name: Run full build
       run: uv run invoke build_local
