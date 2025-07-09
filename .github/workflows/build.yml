@@ -22,7 +22,7 @@ jobs:
       - name: Run Vulture
         run: uv run invoke vulture
       - name: Run Radon
-        run: uv run invoke radon_analysis
+        run: uv run invoke radon-analysis
 
   test:
     name: Test
