@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1
-
 # use official slim Python image
 FROM python:3.12-slim
 

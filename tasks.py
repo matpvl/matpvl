@@ -30,8 +30,15 @@ def _build_started(c):
 
 @task
 def blackd(c):
-    """Run black daemon."""
+    """Run black daemon, used as a background process that formats upon saving."""
     _run_program(["blackd"])
+
+
+@task
+def black(c):
+    """Run black formatter."""
+    _log_task("black")
+    _run_program(["black", "."])
 
 
 @task
@@ -98,6 +105,11 @@ def test(c, k: str = "", verbose: bool = False):
     _section_header("pytest")
     _log_task("tests")
     _run_program(["pytest", "src/tests"])
+
+
+@task(pre=[black, ruff, mypy, vulture, radon_analysis])
+def deploy_lint(c):
+    """Run the linters on deployment."""
 
 
 @task(pre=[_build_started, ruff, mypy, vulture, radon_analysis, test])
