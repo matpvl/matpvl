@@ -1,8 +1,14 @@
+# ignore git stuff
+.gitignore
 .git/
+# ignore the venv
 .venv/
-__pycache__/
+venv/
+# ignore all possible pycaches
+**/__pycache__/
 *.pyc
 *.pyo
 *.pyd
 .DS_Store
 .env
+.docker
